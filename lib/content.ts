@@ -1,3 +1,7 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 export type PostMeta = {
   title: string;
   slug: string;
@@ -21,11 +25,15 @@ export type Category = {
   posts: PostMeta[];
 };
 
-const markdownModules = import.meta.glob("../content/posts/*.md", {
-  eager: true,
-  query: "?raw",
-  import: "default",
-}) as Record<string, string>;
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const postsDirectory = join(currentDir, "..", "content", "posts");
+
+function getMarkdownSources() {
+  return readdirSync(postsDirectory)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .sort()
+    .map((fileName) => readFileSync(join(postsDirectory, fileName), "utf8"));
+}
 
 const categoryDescriptions: Record<string, string> = {
   "Skill 收藏": "保存好用的 agent skills、prompt、設計工具、工作流與實際使用心得。",
@@ -205,7 +213,7 @@ function readPost(source: string): Post {
 }
 
 export function getAllPosts(): Post[] {
-  return Object.values(markdownModules)
+  return getMarkdownSources()
     .map(readPost)
     .sort((first, second) => second.date.localeCompare(first.date));
 }

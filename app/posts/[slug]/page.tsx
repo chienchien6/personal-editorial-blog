@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { formatDate, getAllPosts, getPostBySlug } from "../../../lib/content";
 
 type PostPageProps = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
 export function generateStaticParams() {
@@ -11,7 +11,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const post = getPostBySlug(slug);
   if (!post) return {};
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PostPageProps) {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
