@@ -87,15 +87,25 @@ export default function Home() {
           <p className="label">Contents</p>
           <h2 id="category-heading">探索主題類別</h2>
         </div>
-        <div className="category-grid">
-          {categories.map((category, index) => (
-            <Link className="category-item" href={`/categories#${category.name}`} key={category.name}>
-              <span>{String(index + 1).padStart(2, "0")}.</span>
-              <h3>{category.name}</h3>
-              <p>{category.description}</p>
-              <small>{category.posts.length} 篇文章</small>
+        <div className="editorial-grid">
+          <div className="editorial-feature">
+            <p className="label">系列筆記</p>
+            <h3>把零散筆記整理成一條可追蹤的閱讀線</h3>
+            <p>從導遊口說到音樂與跳舞，這個站用專欄方式把一個主題拆成多篇，讓你回頭時能順著脈絡讀下去。</p>
+            <Link className="primary-link" href="/categories#外語導遊口說">
+              查看外語導遊系列
             </Link>
-          ))}
+          </div>
+          <div className="category-grid">
+            {categories.map((category, index) => (
+              <Link className="category-item" href={`/categories#${category.name}`} key={category.name}>
+                <span>{String(index + 1).padStart(2, "0")}.</span>
+                <h3>{category.name}</h3>
+                <p>{category.description}</p>
+                <small>{category.posts.length} 篇文章</small>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

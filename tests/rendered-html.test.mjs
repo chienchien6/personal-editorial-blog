@@ -33,6 +33,7 @@ test("server-renders the editorial blog homepage", async () => {
   assert.match(html, /Skill 收藏/);
   assert.match(html, /外語導遊口說/);
   assert.match(html, /音樂與跳舞/);
+  assert.match(html, /系列筆記/);
   assert.match(html, /MoveAware/);
   assert.match(html, /TRIP SYNC/);
   assert.doesNotMatch(html, /react-loading-skeleton/);
