@@ -37,6 +37,7 @@ const categoryDescriptions: Record<string, string> = {
   "城市觀察": "城市移動、公共空間、標示、交通與生活現場的紀錄。",
   "生活方法": "把日常整理成可以持續實踐的方法與小系統。",
   "研究收藏": "暫時還沒分類，但值得保存與延伸的研究線索。",
+  "音樂與跳舞": "整理音樂感受、節奏辨識、Swing 舞步與 AI Prompt 的實用練習筆記。",
 };
 
 function parseFrontmatter(source: string) {
