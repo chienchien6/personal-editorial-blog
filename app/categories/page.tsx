@@ -44,26 +44,38 @@ export default function CategoriesPage() {
             <div>
               <h2>{category.name}</h2>
               <p>{category.description}</p>
-              {(category.series?.length ? category.series : []).map((series) => (
-                <div className="series-group" key={series.name}>
-                  <h3>{series.name}</h3>
-                  <p>{series.description}</p>
+              {category.series?.length ? (
+                <div className="series-guide">
+                  {category.series.map((series, seriesIndex) => (
+                    <div className="series-group" key={series.name}>
+                      <div className="series-header">
+                        <span className="series-step">{String(seriesIndex + 1).padStart(2, "0")}</span>
+                        <h3>{series.name}</h3>
+                      </div>
+                      <p>{series.description}</p>
+                      <div className="series-cta">
+                        {seriesIndex === 0 ? "建議先從這段開始" : seriesIndex === 1 ? "接著補齊場景與文化語彙" : "最後練習即時回應與收尾"}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : null}
             </div>
             <div className="category-posts">
               {category.series?.length ? (
-                category.series.map((series) => (
-                  <div key={series.name}>
-                    <div className="series-stack">
-                      {series.posts.map((post) => (
-                        <Link href={`/posts/${post.slug}`} key={post.slug}>
-                          <span>{post.title}</span>
-                          <small>{formatDate(post.date)} / {post.readingTime}</small>
-                          <strong>閱讀</strong>
-                        </Link>
-                      ))}
+                category.series.map((series, seriesIndex) => (
+                  <div className="series-stack" key={series.name}>
+                    <div className="series-label-row">
+                      <span className="series-label">系列 {String(seriesIndex + 1).padStart(2, "0")}</span>
+                      <span className="series-name">{series.name}</span>
                     </div>
+                    {series.posts.map((post) => (
+                      <Link href={`/posts/${post.slug}`} key={post.slug}>
+                        <span>{post.title}</span>
+                        <small>{formatDate(post.date)} / {post.readingTime}</small>
+                        <strong>閱讀</strong>
+                      </Link>
+                    ))}
                   </div>
                 ))
               ) : (
