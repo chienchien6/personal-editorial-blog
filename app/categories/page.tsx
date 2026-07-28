@@ -17,6 +17,7 @@ export default function CategoriesPage() {
           <Link href="/categories#Skill 收藏">Skill 收藏</Link>
           <Link href="/categories#外語導遊口說">導遊口說</Link>
           <Link href="/categories#作品介紹">作品介紹</Link>
+          <Link href="/categories#音樂與跳舞">音樂與跳舞</Link>
         </nav>
       </header>
 
@@ -43,15 +44,37 @@ export default function CategoriesPage() {
             <div>
               <h2>{category.name}</h2>
               <p>{category.description}</p>
+              {(category.series?.length ? category.series : []).map((series) => (
+                <div className="series-group" key={series.name}>
+                  <h3>{series.name}</h3>
+                  <p>{series.description}</p>
+                </div>
+              ))}
             </div>
             <div className="category-posts">
-              {category.posts.map((post) => (
-                <Link href={`/posts/${post.slug}`} key={post.slug}>
-                  <span>{post.title}</span>
-                  <small>{formatDate(post.date)} / {post.readingTime}</small>
-                  <strong>閱讀</strong>
-                </Link>
-              ))}
+              {category.series?.length ? (
+                category.series.map((series) => (
+                  <div key={series.name}>
+                    <div className="series-stack">
+                      {series.posts.map((post) => (
+                        <Link href={`/posts/${post.slug}`} key={post.slug}>
+                          <span>{post.title}</span>
+                          <small>{formatDate(post.date)} / {post.readingTime}</small>
+                          <strong>閱讀</strong>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                category.posts.map((post) => (
+                  <Link href={`/posts/${post.slug}`} key={post.slug}>
+                    <span>{post.title}</span>
+                    <small>{formatDate(post.date)} / {post.readingTime}</small>
+                    <strong>閱讀</strong>
+                  </Link>
+                ))
+              )}
             </div>
           </article>
         ))}

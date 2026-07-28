@@ -43,6 +43,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <Link href="/categories#Skill 收藏">Skill 收藏</Link>
           <Link href="/categories#外語導遊口說">導遊口說</Link>
           <Link href="/categories#作品介紹">作品介紹</Link>
+          <Link href="/categories#音樂與跳舞">音樂與跳舞</Link>
         </nav>
       </header>
 

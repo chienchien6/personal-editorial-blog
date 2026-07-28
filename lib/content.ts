@@ -19,10 +19,17 @@ export type Post = PostMeta & {
   html: string;
 };
 
+export type SeriesGroup = {
+  name: string;
+  description: string;
+  posts: PostMeta[];
+};
+
 export type Category = {
   name: string;
   description: string;
   posts: PostMeta[];
+  series?: SeriesGroup[];
 };
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
@@ -47,6 +54,64 @@ const categoryDescriptions: Record<string, string> = {
   "研究收藏": "暫時還沒分類，但值得保存與延伸的研究線索。",
   "音樂與跳舞": "整理音樂感受、節奏辨識、Swing 舞步與 AI Prompt 的實用練習筆記。",
 };
+
+const seriesDescriptions: Record<string, Record<string, string>> = {
+  "外語導遊口說": {
+    "景點導覽與主題口說": "聚焦景點、城市與國家風景區的英文導覽口說。",
+    "文化習俗與節慶口說": "整理拜拜、紅包、節慶、夜市與在地小吃的口說內容。",
+    "口試模板與即時應答": "把考官追問、忘詞轉圜與 30 秒回應整理成可直接練習的模板。",
+  },
+  "音樂與跳舞": {
+    "Swing 舞步與節奏辨識": "把音樂節奏、身體感受與 Swing 舞步練習串成一條可重複使用的學習路徑。",
+  },
+};
+
+function buildSeriesGroups(categoryName: string, posts: PostMeta[]): SeriesGroup[] {
+  const definitions = seriesDescriptions[categoryName] ?? {};
+  const seriesNames = Object.keys(definitions);
+  const groups = seriesNames.map((name) => ({
+    name,
+    description: definitions[name],
+    posts: [] as PostMeta[],
+  }));
+
+  const unmatched: PostMeta[] = [];
+
+  for (const post of posts) {
+    const title = post.title.toLowerCase();
+    const description = post.description.toLowerCase();
+
+    const matched = groups.find((group) => {
+      const name = group.name.toLowerCase();
+      if (name.includes("景點") || name.includes("主題")) {
+        return /(阿里山|安通|日月潭|台北|台南|台東|國家風景區|景區|導覽稿|景點)/i.test(post.title);
+      }
+      if (name.includes("文化") || name.includes("節慶")) {
+        return /(文化|節慶|夜市|小吃|習俗|紅包|拜拜|廟|元宵|端午|中秋|小籠包|珍珠奶茶)/i.test(title) || /(文化|節慶|夜市|小吃|習俗|紅包|拜拜|廟|元宵|端午|中秋)/i.test(description);
+      }
+      if (name.includes("口試") || name.includes("模板")) {
+        return /(模板|追問|忘記|30 秒|結尾|抽到|考官|口試|應答|流程|轉圜|轉)/i.test(title) || /(模板|追問|忘記|30 秒|結尾|抽到|考官|口試|應答|流程|轉圜|轉)/i.test(description);
+      }
+      if (name.includes("swing") || name.includes("節奏")) {
+        return /(swing|舞|節奏|音樂)/i.test(title) || /(swing|舞|節奏|音樂)/i.test(description);
+      }
+      return false;
+    });
+
+    if (matched) {
+      matched.posts.push(post);
+    } else {
+      unmatched.push(post);
+    }
+  }
+
+  if (unmatched.length) {
+    const fallback = groups[0] ?? { name: categoryName, description: categoryDescriptions[categoryName] ?? "", posts: [] };
+    fallback.posts.push(...unmatched);
+  }
+
+  return groups.filter((group) => group.posts.length > 0);
+}
 
 function parseFrontmatter(source: string) {
   const match = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -235,6 +300,7 @@ export function getCategories(): Category[] {
     name,
     description: categoryDescriptions[name] ?? "持續整理中的文章分類。",
     posts,
+    series: buildSeriesGroups(name, posts),
   }));
 }
 
