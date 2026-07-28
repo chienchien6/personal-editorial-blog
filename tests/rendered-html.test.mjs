@@ -49,3 +49,13 @@ test("server-renders category series groupings", async () => {
   assert.match(html, /口試模板與即時應答/);
   assert.match(html, /Swing 舞步與節奏辨識/);
 });
+
+test("server-renders article bodies on post pages", async () => {
+  const response = await render("/posts/superdesign-taste-skill");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /今天用到的兩個網頁設計 Skill/);
+  assert.match(html, /Superdesign/);
+  assert.match(html, /Taste Skill/);
+});
