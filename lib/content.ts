@@ -1,7 +1,3 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 export type PostMeta = {
   title: string;
   slug: string;
@@ -32,14 +28,16 @@ export type Category = {
   series?: SeriesGroup[];
 };
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
-const postsDirectory = join(currentDir, "..", "content", "posts");
+const markdownModules = import.meta.glob("../content/posts/*.md", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+}) as Record<string, string>;
 
 function getMarkdownSources() {
-  return readdirSync(postsDirectory)
-    .filter((fileName) => fileName.endsWith(".md"))
+  return Object.entries(markdownModules)
     .sort()
-    .map((fileName) => readFileSync(join(postsDirectory, fileName), "utf8"));
+    .map(([, source]) => source);
 }
 
 const categoryDescriptions: Record<string, string> = {

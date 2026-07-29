@@ -1,13 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
+  const normalizedPathname = pathname === "/" ? "/" : `${pathname.replace(/\/+$/, "")}/`;
 
   return worker.fetch(
-    new Request(`http://localhost${pathname}`, {
+    new Request(`http://localhost${basePath}${normalizedPathname}`, {
       headers: { accept: "text/html" },
     }),
     {
